@@ -1,0 +1,18 @@
+{
+  "name": "rimbawana-web",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": { "dev": "next dev", "build": "next build", "start": "next start" },
+  "dependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "^5.1.0",
+    "@fontsource/anton": "^5.1.0",
+    "@supabase/ssr": "^0.5.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "bootstrap-icons": "^1.11.3",
+    "exceljs": "^4.4.0",
+    "next": "^14.2.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  }
+}
