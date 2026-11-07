@@ -9,7 +9,7 @@ export default function PublikNav() {
         <label htmlFor="nav-t" className="hb"><i className="bi bi-list" /></label>
         <nav className="menu">
           <Link href="/">Beranda</Link><Link href="/tentang">Tentang</Link>
-          <Link href="/katalog">Katalog Alat</Link><Link href="/pinjam">Pinjam Alat</Link>
+          <Link href="/galeri">Galeri</Link><Link href="/katalog">Katalog Alat</Link><Link href="/pinjam">Pinjam Alat</Link>
           <Link className="cta" href="/login">Masuk Anggota</Link>
         </nav>
       </div>

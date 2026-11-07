@@ -63,10 +63,10 @@ export default async function Barang({ searchParams }) {
         {daftar.length === 0 && <tr><td colSpan={10} className="kosong">Belum ada barang.</td></tr>}
         {daftar.map(j => (<tr key={j.id}>
           <td>{j.foto_path ? <img className="thumb" src={urlFoto(j.foto_path)} alt="" /> : <div className="thumb ikon"><i className="bi bi-box-seam" /></div>}</td>
-          <td><b>{j.nama}</b></td><td><span className="lencana coklat">{j.divisi}</span></td>
+          <td><b>{j.nama}</b>{j.sembunyikan && <span className="lencana abu" style={{ marginLeft: 6 }}>disembunyikan</span>}</td><td><span className="lencana coklat">{j.divisi}</span></td>
           <td className="angka">{j.total} <small>{j.satuan}</small></td><td className="angka">{j.layak}</td>
           <td className="angka">{j.tidak_layak > 0 ? <span className="lencana merah">{j.tidak_layak}</span> : 0}</td>
-          <td className="angka"><b>{j.tersedia}</b></td><td className="angka">{j.dipinjam}</td>
+          <td className="angka"><b>{j.tersedia}</b>{j.dipesan > 0 && <small title="Sudah diminta, menunggu diserahkan"> ({j.dipesan} dipesan)</small>}</td><td className="angka">{j.dipinjam}</td>
           <td className="bungkus">{j.keterangan || '-'}</td>
           <td><Link className="btn kecil" href={`/barang/${j.id}`}>{kelola ? 'Kelola' : 'Lihat'}</Link></td></tr>))}
       </tbody></table></div>

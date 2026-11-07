@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import Punggung from '@/components/Punggung'
-import { IDENTITAS, DIVISI_PUBLIK, KADERISASI } from '@/lib/konten'
+import { getProfil } from '@/lib/profil'
+export const revalidate = 60
 
-export default function Beranda() {
+export default async function Beranda() {
+  const { identitas: IDENTITAS, divisi: DIVISI_PUBLIK, kaderisasi: KADERISASI } = await getProfil()
   return (<>
     <section className="hero">
       <img className="lambang" src="/logo.png" alt="Lambang Rimbawana" />
@@ -22,7 +24,7 @@ export default function Beranda() {
       <p className="lead">Tempat belajar dan berkegiatan di alam, dengan pendidikan dan kelestarian lingkungan sebagai arah.</p>
       <div className="kisi">
         {DIVISI_PUBLIK.map(d => (
-          <article className="kotak" key={d.kode}>
+          <article className="kotak" key={d.id || d.kode}>
             <div className="ik"><i className={`bi bi-${d.ikon}`} /></div>
             <h3>{d.nama}</h3><p>{d.isi}</p>
           </article>))}
@@ -36,7 +38,7 @@ export default function Beranda() {
         {KADERISASI.map(k => (
           <div className="pos" key={k.tahap}>
             <h3>{k.tahap}</h3><p>{k.isi}</p>
-            {k.sub && <ul>{k.sub.map(s => <li key={s}>{s}</li>)}</ul>}
+            {k.sub?.length > 0 && <ul>{k.sub.map(s => <li key={s}>{s}</li>)}</ul>}
           </div>))}
       </div>
     </section>

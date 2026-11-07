@@ -76,6 +76,7 @@ export default async function DetailBarang({ params, searchParams }) {
           <div className="grid"><div><label>Divisi</label><select name="divisi" defaultValue={j.divisi}>{Object.entries(DIVISI).map(([k, t]) => <option key={k} value={k}>{t}</option>)}</select></div>
             <div><label>Satuan</label><input name="satuan" defaultValue={j.satuan} /></div></div>
           <label>Keterangan</label><input name="keterangan" defaultValue={j.keterangan || ''} />
+          <label><input type="checkbox" name="sembunyikan" defaultChecked={j.sembunyikan} style={{ marginRight: 8 }} />Sembunyikan dari katalog dan form pinjam publik</label>
           <UnggahBerkas name="foto" bucket="foto" folder="barang" accept="image/png,image/jpeg,image/webp" label="Ganti foto (opsional)" />
         </FormAksi>
         <FormAksi aksi={hapusJenis} className="form" tombol="Hapus Barang Ini" bahaya konfirmasi="Hapus barang ini beserta semua unitnya?">

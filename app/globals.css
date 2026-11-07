@@ -125,3 +125,21 @@ a.info:hover{background:#fff}.info>i{font-size:1.4rem;width:50px;height:50px;fle
   body::before,.sidebar,.topbar,.nav,.footer,.tanpa-cetak{display:none!important}.app,.konten{display:block}main{padding:0!important}
   .label-qr{gap:6px}.label-qr figure{border-color:#999}
 }
+
+/* ===== Chat pengurus ===== */
+.chat{display:flex;flex-direction:column;height:calc(100vh - 210px);min-height:360px;background:var(--kertas2);border:1px solid var(--garis);border-radius:16px;overflow:hidden}
+.chat .isi{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(#f1ecdb,#f1ecdb)}
+.gel{max-width:min(78%,520px);padding:8px 12px;border-radius:14px 14px 14px 4px;background:#fff;border:1px solid var(--garis);align-self:flex-start;word-break:break-word}
+.gel.saya{align-self:flex-end;background:#dcefd3;border-color:#bcd9ae;border-radius:14px 14px 4px 14px}.gel .nama{font-size:.74rem;font-weight:700;color:var(--langit);display:block}
+.gel .jam{font-size:.68rem;color:var(--redup);display:flex;gap:8px;justify-content:flex-end;margin-top:2px}.gel .teks{white-space:pre-wrap}.gel.hapus{opacity:.55;font-style:italic}
+.gel .jam button{background:none;color:var(--redup);padding:0;font-size:.7rem}.sistem{align-self:center;font-size:.78rem;color:var(--redup)}
+.meet{align-self:flex-start;width:min(92%,420px);border:1.5px solid var(--langit);background:#fff;border-radius:14px;overflow:hidden}
+.meet.saya{align-self:flex-end}.meet .kepala{background:var(--langit);color:#fff;padding:8px 12px;display:flex;gap:8px;align-items:center;font-weight:700}
+.meet .badan{padding:10px 12px;display:grid;gap:6px}.meet .btn{justify-self:start;background:#1a73e8}
+.chat .kirim{display:flex;gap:8px;padding:10px;border-top:1px solid var(--garis);background:var(--kertas2);align-items:flex-end}
+.chat .kirim textarea{min-height:44px;max-height:120px;flex:1}.chat .meetform{padding:12px;border-top:1px solid var(--garis);background:#eef6f8}
+.ruang{display:flex;gap:12px;align-items:center;padding:14px;background:var(--kertas2);border:1px solid var(--garis);border-radius:14px;text-decoration:none;color:inherit}
+.ruang:hover{background:#fff}.ruang .ik{width:46px;height:46px;border-radius:50%;background:var(--hutan);color:var(--api2);display:grid;place-items:center;font-size:1.3rem;flex:none}
+.ruang .tx{flex:1;min-width:0}.ruang .tx b{display:block}.ruang .tx small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.titik{background:var(--api);color:#2a1a05;border-radius:99px;min-width:22px;height:22px;display:grid;place-items:center;font-size:.75rem;font-weight:800;padding:0 6px}
+.daftar-ruang{display:grid;gap:10px;margin-bottom:18px}

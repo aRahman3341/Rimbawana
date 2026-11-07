@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function Kas() {
   const saya = await wajibMasuk()
-  const uang = boleh(saya, 'uang'), lihat = boleh(saya, 'pengurus')
+  const uang = boleh(saya, 'uang'), lihat = boleh(saya, 'lihat')
   const adm = admin()
   const cfg = Object.fromEntries(ambil(await adm.from('rmb_pengaturan').select('*')).map(r => [r.kunci, r.nilai]))
   const nominal = Number(cfg.kas_nominal || 25000), mulai = cfg.kas_mulai || awalBulan()
@@ -20,7 +20,7 @@ export default async function Kas() {
     adm.from('kas_iuran').select('periode,status,catatan').eq('anggota_id', saya.id).then(ambil),
     lihat ? adm.from('kas_iuran').select('id,periode,jumlah,bukti_path,created_at, anggota:anggota!anggota_id(nama_adat)').eq('status', 'menunggu').order('created_at').then(ambil) : [],
     lihat ? adm.from('v_tunggakan').select('anggota_id,nama_adat,periode,nominal').then(ambil) : [],
-    uang ? adm.from('anggota').select('id,nama_adat').eq('aktif', true).neq('jabatan', 'alumni').order('nama_adat').then(ambil) : []])
+    uang ? adm.from('anggota').select('id,nama_adat').eq('aktif', true).neq('jabatan', 'alumni').neq('peran', 'founder').order('nama_adat').then(ambil) : []])
   const url = await urlArsip(antrian.map(a => a.bukti_path))
   const status = (b) => { const r = saku.filter(x => x.periode === b); return r.find(x => x.status === 'terverifikasi') ? 'lunas' : r.find(x => x.status === 'menunggu') ? 'menunggu' : 'belum' }
   const belum = bulan.filter(b => status(b) === 'belum')

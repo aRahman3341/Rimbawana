@@ -15,6 +15,6 @@ export default function FormTambah({ angkatan, ketua }) {
     <div><label>No HP</label><input name="no_hp" /></div>
     <div><label>Email (opsional)</label><input name="email" type="email" /></div>
     <div><label>Password awal</label><input name="password" type="password" autoComplete="new-password" /></div>
-  </div>{!ketua && <p>Peran pengurus dan angkatan hanya diisi Ketua Adat atau Founder.</p>}
+  </div>{!ketua && <p>Peran pengurus dan angkatan hanya diisi Ketua Adat.</p>}
   <p className="err">{s?.error}</p><p>{s?.ok}</p><button>Simpan</button></form>)
 }

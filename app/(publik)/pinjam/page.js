@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Pinjam Alat' }
 
 export default async function Pinjam({ searchParams }) {
-  const jenis = ambil(await admin().from('v_stok_jenis').select('id,nama,divisi,tersedia').gt('tersedia', 0).order('divisi').order('nama'))
+  const jenis = ambil(await admin().from('v_stok_jenis').select('id,nama,divisi,bebas').gt('bebas', 0).eq('sembunyikan', false).order('divisi').order('nama')).map(j => ({ ...j, tersedia: j.bebas }))
   const awal = jenis.some(j => j.id === searchParams.jenis) ? [{ jenis_id: searchParams.jenis, jumlah: 1 }] : []
   return (<section className="seksi" style={{ maxWidth: 760 }}>
     <h2 className="jdl">Pinjam Alat</h2>

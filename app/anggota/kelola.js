@@ -13,7 +13,7 @@ async function izin(id) {
   const sb = createClient()
   const [{ data: saya }, { data: admin }, { data: ketua }, { data: { user } }] = await Promise.all([
     sb.rpc('peran_saya'), sb.rpc('is_admin_anggota'), sb.rpc('is_ketua'), sb.auth.getUser()])
-  if (!user || !admin) return { error: 'Hanya Ketua Adat, Founder, atau Sekretaris yang boleh mengelola anggota.' }
+  if (!user || !admin) return { error: 'Hanya Ketua Adat atau Sekretaris yang boleh mengelola anggota.' }
   const { data: t } = await createAdmin().from('anggota').select('*').eq('id', id).maybeSingle()
   if (!t) return { error: 'Anggota tidak ditemukan.' }
   if (!bolehKelola(saya, t.peran)) return { error: 'Kamu tidak berwenang mengelola anggota ini.' }
@@ -35,7 +35,7 @@ export async function simpanAnggota(_prev, fd) {
   if (!founder) {
     if (ketua && fd.has('peran')) upd.peran = jabatan === 'pengurus' ? (v('peran') || 'anggota') : 'anggota'
     else if (jabatan !== 'pengurus') upd.peran = 'anggota'
-    if (upd.peran === 'founder') return { error: 'Peran Founder tidak bisa diberikan lewat web.' }
+    if (upd.peran === 'founder') return { error: 'Peran ini tidak bisa diberikan lewat web.' }
   }
   const adm = createAdmin()
   const tanpaAkun = jabatan === 'alumni' && !founder       // alumni = data saja

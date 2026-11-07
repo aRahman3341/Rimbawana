@@ -2,14 +2,15 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Shell from '@/components/Shell'
 import FormAksi from '@/components/FormAksi'
-import { wajibMasuk } from '@/lib/auth'
+import { wajibMasuk, boleh } from '@/lib/auth'
 import { admin, ambil } from '@/lib/db'
 import { tgl, hariIni, waLink, TIPE_PINJAM, STATUS_PINJAM } from '@/lib/format'
 import { serahkanAksi, tolakAksi, kembaliAksi } from '../actions'
 export const dynamic = 'force-dynamic'
 
 export default async function DetailPinjam({ params }) {
-  await wajibMasuk('inventaris')
+  const saya = await wajibMasuk('lihatInv')
+  const bisa = boleh(saya, 'inventaris')
   const adm = admin()
   const p = ambil(await adm.from('pinjam').select('*, mapala:mapala_mitra(nama,kontak_nama,kontak_hp), proses:anggota!diproses_oleh(nama_adat)').eq('id', params.id).maybeSingle())
   if (!p) notFound()
@@ -38,14 +39,14 @@ export default async function DetailPinjam({ params }) {
       </div>
 
       <div>
-        {p.status === 'menunggu' && <>
+        {bisa && p.status === 'menunggu' && <>
           <FormAksi aksi={serahkanAksi} className="form" tombol="Setujui & Serahkan Alat" reset={false}>
             <h2>Proses permintaan</h2><input type="hidden" name="id" value={p.id} />
             <p className="redup" style={{ margin: 0 }}>Unit layak dan tersedia dipilih otomatis lalu ditandai Dipinjam.</p></FormAksi>
           <FormAksi aksi={tolakAksi} className="form" tombol="Tolak" bahaya reset={false}>
             <input type="hidden" name="id" value={p.id} /><label>Alasan penolakan</label><input name="catatan" maxLength={200} /></FormAksi></>}
 
-        {p.status === 'dipinjam' && <FormAksi aksi={kembaliAksi} className="form" tombol="Tandai Dikembalikan" reset={false}>
+        {bisa && p.status === 'dipinjam' && <FormAksi aksi={kembaliAksi} className="form" tombol="Tandai Dikembalikan" reset={false}>
           <h2>{p.tipe === 'kita_pinjam' ? 'Kembalikan ke mapala pemilik' : 'Pengembalian alat'}</h2><input type="hidden" name="id" value={p.id} />
           {p.tipe !== 'kita_pinjam' && <p className="redup" style={{ margin: '0 0 6px' }}>Periksa kondisi tiap unit saat kembali.</p>}
           {unit.map(u => <div key={u.unit.id} className="baris" style={{ marginBottom: 6 }}>

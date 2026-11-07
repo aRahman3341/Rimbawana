@@ -6,15 +6,21 @@ import { getSaya, boleh } from '@/lib/auth'
 // izin = nama kelompok di lib/auth.js. Tanpa izin = semua anggota yang login.
 const MENU = [
   { id: 'dashboard', label: 'Dashboard', icon: 'compass', href: '/dashboard' },
+  { label: 'Komunikasi', icon: 'chat-dots', izin: 'lihat', items: [
+    { id: 'chat', label: 'Chat Pengurus', href: '/chat' },
+    { id: 'pengawasan', label: 'Pengawasan BPR', href: '/pengawasan' } ] },
   { label: 'Inventaris', icon: 'backpack', items: [
     { id: 'barang', label: 'Data Barang', href: '/barang' },
-    { id: 'peminjaman', label: 'Peminjaman', href: '/peminjaman', izin: 'inventaris' } ] },
-  { label: 'Persuratan', icon: 'envelope-paper', izin: 'pengurus', items: [
+    { id: 'peminjaman', label: 'Peminjaman', href: '/peminjaman', izin: 'lihatInv' } ] },
+  { label: 'Persuratan', icon: 'envelope-paper', izin: 'lihat', items: [
     { id: 'surat', label: 'Arsip Surat', href: '/surat' } ] },
   { label: 'Keuangan', icon: 'wallet2', items: [
     { id: 'kas', label: 'Kas Anggota', href: '/kas' },
-    { id: 'keuangan', label: 'Buku Kas', href: '/keuangan', izin: 'pengurus' },
-    { id: 'kegiatan', label: 'RAB Kegiatan', href: '/kegiatan', izin: 'pengurus' } ] },
+    { id: 'keuangan', label: 'Buku Kas', href: '/keuangan', izin: 'lihat' },
+    { id: 'kegiatan', label: 'RAB Kegiatan', href: '/kegiatan', izin: 'lihat' } ] },
+  { label: 'Situs Publik', icon: 'globe2', izin: 'lihat', items: [
+    { id: 'profil', label: 'Profil Situs', href: '/profil', izin: 'profil' },
+    { id: 'media', label: 'Galeri Media', href: '/media' } ] },
   { label: 'Master', icon: 'database', items: [
     { id: 'anggota', label: 'Anggota', href: '/anggota' },
     { id: 'lokasi', label: 'Lokasi Simpan', href: '/lokasi', izin: 'inventaris' },

@@ -17,7 +17,7 @@ export default async function Anggota() {
     {admin && <details className="tambah"><summary className="btn"><i className="bi bi-plus-lg" /> Tambah Anggota</summary>
       <FormTambah angkatan={angkatan || []} ketua={!!ketua} /></details>}
     <div className="tabel"><table><thead><tr><th>No</th><th>Nama adat</th><th>Nama lengkap</th><th>Status</th><th>Jabatan</th><th>Angkatan</th><th>NTA</th><th>No HP</th>{admin && <th></th>}</tr></thead>
-      <tbody>{(daftar || []).map((a, i) => (<tr key={a.id}>
+      <tbody>{(daftar || []).filter(a => a.peran !== 'founder' || saya === 'founder').map((a, i) => (<tr key={a.id}>
         <td>{i + 1}</td><td>{a.nama_adat}</td><td>{a.nama_lengkap}</td><td>{STATUS[a.status] || '-'}</td>
         <td>{a.jabatan}{a.peran !== 'anggota' ? ` (${PERAN[a.peran]})` : ''}</td><td>{a.angkatan?.kode || '-'}</td><td>{a.nta || '-'}</td><td>{a.no_hp || '-'}</td>{admin && <td>{bolehKelola(saya, a.peran) && <Link className="btn kecil" href={`/anggota/${a.id}`}>Edit</Link>}</td>}</tr>))}</tbody></table></div>
   </Shell>)

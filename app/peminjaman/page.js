@@ -1,19 +1,19 @@
 import Link from 'next/link'
 import Shell from '@/components/Shell'
-import { wajibMasuk } from '@/lib/auth'
+import { wajibMasuk, boleh } from '@/lib/auth'
 import { admin, ambil } from '@/lib/db'
 import { tgl, hariIni, waLink, TIPE_PINJAM, STATUS_PINJAM } from '@/lib/format'
 export const dynamic = 'force-dynamic'
 
 const TAB = [['', 'Semua'], ['menunggu', 'Menunggu'], ['dipinjam', 'Dipinjam'], ['dikembalikan', 'Selesai'], ['ditolak', 'Ditolak']]
 export default async function Peminjaman({ searchParams }) {
-  await wajibMasuk('inventaris')
+  const saya = await wajibMasuk('lihatInv')
   const st = STATUS_PINJAM[searchParams.status] ? searchParams.status : ''
   let q = admin().from('pinjam').select('*, mapala:mapala_mitra(nama), items:pinjam_item(jumlah, jenis:barang_jenis(nama))').order('created_at', { ascending: false }).limit(200)
   if (st) q = q.eq('status', st)
   const daftar = ambil(await q), hari = hariIni()
   return (<Shell aktif="peminjaman" judul="Peminjaman">
-    <div className="baris"><Link className="btn" href="/peminjaman/baru"><i className="bi bi-plus-lg" /> Catat Peminjaman</Link>
+    <div className="baris">{boleh(saya, 'inventaris') && <Link className="btn" href="/peminjaman/baru"><i className="bi bi-plus-lg" /> Catat Peminjaman</Link>}
       <span className="redup">Permintaan dari situs publik masuk otomatis dengan status Menunggu.</span></div>
     <div className="tabs">{TAB.map(([k, t]) => <Link key={k} className={`tab ${st === k ? 'aktif' : ''}`} href={k ? `/peminjaman?status=${k}` : '/peminjaman'}>{t}</Link>)}</div>
     <div className="tabel"><table>

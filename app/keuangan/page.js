@@ -11,7 +11,7 @@ import { tambahTransaksi, hapusTransaksi } from './actions'
 export const dynamic = 'force-dynamic'
 
 export default async function Keuangan({ searchParams }) {
-  const saya = await wajibMasuk('pengurus')
+  const saya = await wajibMasuk('lihat')
   const uang = boleh(saya, 'uang')
   const bln = /^\d{4}-\d{2}$/.test(searchParams.bulan || '') ? searchParams.bulan : ''
   const adm = admin()

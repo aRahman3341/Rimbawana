@@ -33,7 +33,7 @@ export async function ubahJenis(_p, fd) {
   const id = teks(fd, 'id'), nama = teks(fd, 'nama'), foto = teks(fd, 'foto')
   if (!id || !nama) return { error: 'Nama barang wajib diisi.' }
   if (!pathAman(foto, 'barang/')) return { error: 'Berkas foto tidak valid.' }
-  const upd = { nama, satuan: teks(fd, 'satuan') || 'buah', keterangan: teks(fd, 'keterangan') }
+  const upd = { nama, satuan: teks(fd, 'satuan') || 'buah', keterangan: teks(fd, 'keterangan'), sembunyikan: fd.get('sembunyikan') === 'on' }
   if (DIVISI[teks(fd, 'divisi')]) upd.divisi = teks(fd, 'divisi')
   if (foto) upd.foto_path = foto
   const { error } = await admin().from('barang_jenis').update(upd).eq('id', id)

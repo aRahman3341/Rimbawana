@@ -24,12 +24,12 @@ export async function ajukanPinjam(_prev, fd) {
   if (!gabung.size) return { error: 'Pilih minimal satu alat.' }
 
   const adm = admin()
-  const { data: stok, error: e1 } = await adm.from('v_stok_jenis').select('id,nama,tersedia').in('id', [...gabung.keys()])
+  const { data: stok, error: e1 } = await adm.from('v_stok_jenis').select('id,nama,bebas,sembunyikan').in('id', [...gabung.keys()])
   if (e1) return { error: e1.message }
   for (const [id, n] of gabung) {
     const s = stok.find(x => x.id === id)
     if (!s) return { error: 'Ada alat yang tidak dikenal. Muat ulang halaman.' }
-    if (s.tersedia < n) return { error: `Stok ${s.nama} hanya tersedia ${s.tersedia}.` }
+    if (s.sembunyikan || s.bebas < n) return { error: s.bebas > 0 && !s.sembunyikan ? `Stok ${s.nama} hanya tersedia ${s.bebas}.` : `${s.nama} sedang tidak tersedia.` }
   }
   const { count } = await adm.from('pinjam').select('id', { count: 'exact', head: true }).eq('peminjam_hp', hp).eq('status', 'menunggu')
   if ((count || 0) >= 3) return { error: 'Kamu masih punya 3 permintaan yang belum diproses. Tunggu pengurus menghubungi.' }

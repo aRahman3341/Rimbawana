@@ -5,13 +5,13 @@ import TombolAksi from '@/components/TombolAksi'
 import UnggahBerkas from '@/components/UnggahBerkas'
 import { wajibMasuk, boleh } from '@/lib/auth'
 import { admin, ambil } from '@/lib/db'
-import { urlArsip } from '@/lib/berkas'
+import { urlArsip, tautanBerkas } from '@/lib/berkas'
 import { tgl, hariIni, KATEGORI_SURAT } from '@/lib/format'
 import { simpanSurat, pasangBerkas, hapusSurat } from './actions'
 export const dynamic = 'force-dynamic'
 
 export default async function Surat({ searchParams }) {
-  const saya = await wajibMasuk('pengurus')
+  const saya = await wajibMasuk('lihat')
   const kelola = boleh(saya, 'surat')
   const arah = ['keluar', 'masuk'].includes(searchParams.arah) ? searchParams.arah : ''
   const kat = KATEGORI_SURAT[searchParams.kategori] ? searchParams.kategori : ''
@@ -47,7 +47,7 @@ export default async function Surat({ searchParams }) {
           <div><label>Terkait kegiatan (opsional)</label><select name="kegiatan_id"><option value="">-</option>{kegiatan.map(k => <option key={k.id} value={k.id}>{k.nama}</option>)}</select></div>
         </div>
         <label>Ringkasan (opsional)</label><textarea name="ringkasan" maxLength={500} />
-        <UnggahBerkas name="file" folder="surat" label="Berkas PDF (opsional, maks. 10 MB)" bantuan="Contoh: proposal Mabim, surat undangan, surat peminjaman alat." />
+        <UnggahBerkas name="file" folder="surat" drive label="Berkas surat (opsional)" bantuan="Contoh: proposal Mabim, surat undangan. File disimpan di Storage/Drive, bukan di database." />
       </FormAksi></details>}
 
     <div className="tabel"><table>
@@ -58,9 +58,9 @@ export default async function Surat({ searchParams }) {
           <td><b>{s.nomor}</b></td><td>{tgl(s.tanggal)}</td>
           <td><span className={`lencana ${s.arah === 'keluar' ? 'biru' : 'kuning'}`}>{s.arah}</span></td><td>{KATEGORI_SURAT[s.kategori]}</td>
           <td className="bungkus">{s.perihal}{s.kegiatan && <small><br />Kegiatan: {s.kegiatan.nama}</small>}</td><td>{s.pihak || '-'}</td>
-          <td>{url[s.file_path] ? <a className="btn kecil" href={url[s.file_path]} target="_blank" rel="noreferrer"><i className="bi bi-file-earmark-pdf" /> Buka</a>
+          <td>{tautanBerkas(s.file_url, s.file_path, url) ? <><a className="btn kecil" href={tautanBerkas(s.file_url, s.file_path, url)} target="_blank" rel="noreferrer"><i className={`bi bi-${s.file_url ? 'google' : 'file-earmark-pdf'}`} /> Buka</a>{s.file_ukuran > 0 && <small style={{ marginLeft: 6 }}>{(s.file_ukuran / 1048576).toFixed(1)} MB</small>}</>
             : kelola ? <details><summary className="btn kecil abu" style={{ listStyle: 'none' }}>Unggah</summary>
-              <FormAksi aksi={pasangBerkas} tombol="Pasang" kecil><input type="hidden" name="id" value={s.id} /><UnggahBerkas name="file" folder="surat" label="PDF" /></FormAksi></details> : '-'}</td>
+              <FormAksi aksi={pasangBerkas} tombol="Pasang" kecil><input type="hidden" name="id" value={s.id} /><UnggahBerkas name="file" folder="surat" drive label="Berkas" /></FormAksi></details> : '-'}</td>
           {kelola && <td><TombolAksi aksi={hapusSurat} data={{ id: s.id }} ikon="trash" cls="kecil bahaya" konfirmasi="Hapus surat ini dari arsip? Nomornya tidak dipakai ulang." /></td>}
         </tr>))}
       </tbody></table></div>

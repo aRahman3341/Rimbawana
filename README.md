@@ -1,104 +1,75 @@
-# Rimbawana Web v0.2
+# Rimbawana Web v0.3
 
-Situs publik + sistem internal UKM Rimbawana UPI Kampus Cibiru: **inventaris barang, peminjaman, arsip surat, kas anggota (QRIS), buku kas, dan RAB kegiatan**.
-Stack: Next.js 14 (App Router) + Supabase (Postgres, Auth, Storage) + Vercel gratis.
+Situs publik + sistem internal UKM Rimbawana UPI Kampus Cibiru.
+Stack: Next.js 14 + Supabase (Postgres, Auth, Storage) + Vercel gratis.
 
-## Isi versi ini
-| Area | Fitur |
+## Baru di v0.3
+| Fitur | Keterangan |
 |---|---|
-| Situs publik | Beranda, Tentang (sejarah), Katalog Alat, Pinjam Alat (tanpa login), halaman info barang dari QR |
-| Inventaris | Jenis dan unit barang, harga, kondisi layak/tidak layak, foto, lokasi simpan, QR label, impor dan ekspor Excel |
-| Peminjaman | Anggota (dari situs publik), mapala lain pinjam ke kita, kita pinjam ke mapala lain (jadi inventaris sementara). Status unit berubah otomatis |
-| Arsip surat | Nomor surat otomatis, unggah PDF, surat masuk/keluar, kaitan ke kegiatan dan peminjaman |
-| Keuangan | Kas Rp 25.000/bulan, bayar QRIS + bukti, verifikasi bendahara, daftar penunggak, buku kas, RAB PDF yang di-ACC Ketua Adat |
-| Akun | Login nama adat, ganti password pertama, kelola anggota (fase 1, tetap) |
+| **Profil Situs** (menu admin) | Identitas, sejarah, divisi, dan alur kaderisasi diubah dari web, langsung tampil di situs publik |
+| **Galeri Media** | Foto/video/album Rimbawana dicatat sebagai **link Google Drive** (atau foto kecil), tampil di halaman Galeri publik |
+| **Berkas tidak di database** | Surat dan RAB disimpan sebagai file (Supabase Storage, maks 50 MB) atau link Drive (maks 100 MB). Database hanya menyimpan penunjuk dan memastikan file itu ada |
+| **Chat Pengurus** | Ruang chat grup ala WhatsApp untuk pengurus dan BPR, diatur admin. Pesan masuk otomatis. Bisa membagikan **kartu Google Meet** |
+| **Role BPR** | Badan Pengawas Rimbawana: melihat semua halaman pengurus, **tidak bisa mengubah apa pun**, bisa memberi **arahan** di menu Pengawasan BPR |
+| **Barang hilang otomatis** | Barang yang semua stoknya sudah dipesan/dipinjam otomatis hilang dari katalog dan form pinjam publik. Ada juga tombol **Sembunyikan** per barang |
+| **Founder tersembunyi** | Role Founder hanya untuk akun developer, tidak muncul di daftar anggota, kas, chat, atau laporan siapa pun. Becel kini Bendahara biasa |
 
 ## Wewenang per peran
 | Peran | Boleh |
 |---|---|
-| Founder | Semua |
-| Ketua Adat | Barang, peminjaman, surat, **ACC/tolak RAB**, lihat keuangan |
-| Sekretaris | Barang, peminjaman, surat, kelola anggota |
+| Ketua Adat | Barang, peminjaman, surat, ubah profil situs, buat ruang chat, **ACC/tolak RAB** |
+| Sekretaris | Barang, peminjaman, surat, ubah profil situs, kelola anggota, buat ruang chat |
 | Perlengkapan | Barang, peminjaman, lokasi, mapala mitra |
 | Bendahara | Verifikasi kas, catat transaksi, pengaturan kas/QRIS |
+| **BPR** | **Hanya melihat** (barang, peminjaman, surat, kas, buku kas, RAB, chat) + memberi arahan |
 | Anggota | Lihat barang, bayar kas sendiri |
 
-Mau ubah pembagian? Edit satu tempat saja: `lib/auth.js` (objek `KELOMPOK`).
+Pembagian ini bisa diubah di satu tempat: `lib/auth.js` (objek `KELOMPOK`).
 
 ---
-## A. Pasang (pertama kali)
+## A. Upgrade dari v0.2 (sudah terpasang)
+1. Ekstrak ZIP, timpa isi folder repo (jangan hapus folder `.git`), commit dan push lewat GitHub Desktop.
+2. Supabase > SQL Editor: jalankan **`supabase/04_fitur_lanjutan.sql`** (aman diulang). Ini menambah peran BPR, tabel baru, mengubah Becel menjadi Bendahara, dan memperbarui batas ukuran Storage.
+3. (Opsional) buat akun Founder developer: ikuti **`supabase/05_founder_tersembunyi.sql`**.
+4. (Opsional, disarankan) pasang Kunci Google (bagian C).
+5. Restart `npm run dev`, atau tunggu Vercel selesai deploy.
+6. Untuk menjadikan seseorang BPR: menu **Anggota > ubah**, jabatan **pengurus**, peran **Badan Pengawas (BPR)**.
 
-### 1. Siapkan alat
-* **Node.js 20 LTS** dari nodejs.org (cek: `node -v`). Perintah `git` tidak wajib: pakai **GitHub Desktop** untuk commit dan push.
+## B. Pasang dari nol
+1. Node.js 20 LTS. Perintah `git` tidak wajib (pakai GitHub Desktop).
+2. Supabase SQL Editor, jalankan berurutan: `01_rombak_inventaris.sql`, `02_seed_inventaris.sql`, `04_fitur_lanjutan.sql` (lalu opsional `03` dan `05`).
+3. Salin `.env.example` menjadi `.env.local`, isi kunci Supabase (Project Settings > API). **Jangan commit `.env.local`.**
+4. `npm install` lalu `npm run dev`, buka http://localhost:3000.
+5. Deploy: Vercel > Import repo > isi Environment Variables yang sama (`NEXT_PUBLIC_SITE_URL` = alamat Vercel-mu).
 
-### 2. Timpa isi repo
-1. Ekstrak ZIP ini.
-2. Buka folder repo `rimbawana-web` di komputer (yang dikelola GitHub Desktop).
-3. Hapus semua isinya **kecuali folder `.git`** (folder tersembunyi), lalu salin seluruh isi hasil ekstrak ZIP ke dalamnya.
-4. Di GitHub Desktop: tulis pesan commit (mis. "v0.2: inventaris, surat, keuangan") lalu **Commit** dan **Push origin**.
+## C. Kunci Google (agar sistem memastikan file Drive ADA dan ukurannya <= 100 MB)
+Tanpa kunci, link Drive tetap diterima (halaman publiknya dicek terbuka), tetapi **ukuran tidak bisa diperiksa**.
+1. console.cloud.google.com > buat proyek baru.
+2. APIs & Services > Library > cari **Google Drive API** > Enable.
+3. APIs & Services > Credentials > Create credentials > **API key**. Batasi ke Google Drive API.
+4. Salin ke `GOOGLE_API_KEY` di `.env.local` dan di Environment Variables Vercel. Kunci ini hanya bisa membaca info file yang dibagikan publik.
 
-### 3. Database Supabase (proyek lama Inventaris-Rimba)
-Buka Supabase, menu **SQL Editor**, lalu jalankan berurutan (tempel isi file, klik Run):
-1. `supabase/01_rombak_inventaris.sql`: membuat semua tabel baru, fungsi, dan bucket penyimpanan. Aman diulang. Tidak menyentuh tabel `anggota` dan `angkatan`.
-2. `supabase/02_seed_inventaris.sql`: memasukkan 50 jenis / 255 unit dari Excel `Inventaris_Rimbawana_2026.xlsx` (RC dan HG). Aman diulang.
-3. (Opsional) `supabase/03_opsional_cek_tabel_lama.sql`: menampilkan daftar tabel. Tabel sisa aplikasi Aset yang tidak terpakai bisa dihapus manual setelah backup.
+## D. Cara memakai
+* **File surat/RAB/foto:** pilih tab *Unggah file* (maks 50 MB) atau *Link Google Drive* (maks 100 MB). Di Drive: Bagikan > Akses umum > **Siapa saja yang memiliki link** (Pelihat), lalu salin link. File di atas 50 MB otomatis diarahkan ke Drive.
+* **Galeri:** menu *Galeri Media* > Tambah Media. Video, album (link folder), dan foto besar lewat Drive. Tombol mata menyembunyikan dari situs publik.
+* **Profil Situs:** ubah teks, tambah bagian sejarah, divisi, tahap kaderisasi. Tersimpan di database, tampil di Beranda/Tentang.
+* **Chat:** menu *Chat Pengurus*. Ketua Adat/Sekretaris membuat ruang (umum = semua pengurus + BPR, khusus = anggota dipilih) dan mengatur anggota lewat *Atur ruang*. Ikon kamera di kolom pesan membagikan link **Google Meet** (tombol *Buat rapat Meet baru* membuka meet.new). Rapat yang akan datang tampil di Dashboard.
+* **Pengawasan BPR:** BPR menulis arahan (bisa dikaitkan ke kegiatan); pengurus menanggapi dan menandai Dikerjakan/Selesai.
+* **Sembunyikan barang:** otomatis saat stok bebas = 0 (tersedia dikurangi yang sudah dipesan). Manual: Data Barang > Kelola > centang *Sembunyikan*.
 
-Cek hasilnya: menu **Table Editor** harus menampilkan tabel `barang_jenis`, `barang_unit`, `pinjam`, `surat_arsip`, `kas_iuran`, `buku_kas`, dan seterusnya. Menu **Storage** harus punya bucket `arsip` (privat) dan `foto` (publik).
-Jika aplikasi bilang tabel tidak ditemukan, tunggu semenit atau jalankan `notify pgrst, 'reload schema';`.
-
-### 4. Variabel lingkungan
-Salin `.env.example` menjadi **`.env.local`** (di folder proyek) lalu isi:
-```
-NEXT_PUBLIC_SUPABASE_URL=...           (Supabase > Project Settings > API > Project URL)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...      (anon public key)
-SUPABASE_SERVICE_ROLE_KEY=...          (service_role key, RAHASIA)
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-EMAIL_DOMAIN_TEKNIS=anggota.invalid    (biarkan sama seperti yang sudah dipakai sebelumnya)
-```
-Nilai ini sama dengan yang sudah kamu pakai di fase 1. **Jangan pernah meng-commit `.env.local`** (sudah ada di `.gitignore`).
-
-### 5. Jalankan di komputer
-```
-npm install
-npm run dev
-```
-Buka http://localhost:3000. Login dengan akun yang sudah ada.
-
-### 6. Deploy ke Vercel (gratis)
-1. vercel.com > Add New > Project > pilih repo `rimbawana-web`.
-2. Isi **Environment Variables** yang sama seperti di `.env.local`, tetapi `NEXT_PUBLIC_SITE_URL` diisi alamat Vercel-mu (mis. `https://rimbawana.vercel.app`).
-3. Deploy. Setiap push ke GitHub otomatis memperbarui situs.
-
----
-## B. Setelah terpasang: yang perlu kamu isi
-
-1. **Sejarah Rimbawana** (halaman Tentang): buka `lib/konten.js`, isi daftar `SEJARAH`. Contoh format ada di komentar file itu. Alamat, email, dan akun sosial media juga di file yang sama.
-2. **QRIS**: login sebagai Bendahara/Founder, menu **Kas Anggota**, bagian Pengaturan kas, unggah gambar QRIS. Cek juga nominal (default Rp 25.000) dan **bulan mulai tagihan** (default November 2026).
-3. **Mapala mitra dan lokasi simpan**: menu Master.
-4. **Harga dan kondisi barang**: menu Data Barang, klik Kelola pada barang lalu Ubah per unit. Atau isi kolom Harga di Excel lalu impor.
-5. **Label QR**: Data Barang, tombol Cetak QR. QR membuka halaman info barang di situs.
-6. **Format nomor surat**: default `007/RMB-UPI/UND/XI/2026`. Jika format resmi berbeda, ubah di fungsi `rmb_buat_surat_keluar` pada `01_rombak_inventaris.sql` (ada komentar "FORMAT NOMOR SURAT") lalu jalankan ulang file itu.
-
-## C. Alur kerja singkat
-* **Pinjam alat (anggota)**: situs publik > Pinjam Alat > isi formulir. Pengurus perlengkapan membuka **Peminjaman**, tekan **Setujui & Serahkan**, unit dipilih otomatis. Saat kembali, tandai tiap unit layak atau tidak layak.
-* **Mapala lain pinjam / kita pinjam**: **Peminjaman > Catat Peminjaman**. Alat pinjaman dari mapala lain muncul sebagai unit sementara (berlabel "pinjaman") sampai dikembalikan.
-* **Kas**: anggota bayar lewat QRIS, unggah bukti. Bendahara menerima atau menolak. Yang diterima otomatis masuk **Buku Kas**. Kas tunai dicatat bendahara.
-* **RAB**: pengurus buat kegiatan dan unggah RAB (PDF), Ketua Adat ACC atau tolak (dengan alasan). Pengeluaran kegiatan baru bisa dicatat setelah RAB disetujui. Progres terpakai vs anggaran tampil otomatis.
-
-## D. Masalah umum
+## E. Masalah umum
 | Gejala | Solusi |
 |---|---|
-| `Invalid API key` / halaman error | Periksa `.env.local`, lalu restart `npm run dev` |
-| Tidak bisa unggah PDF/foto | Pastikan `01_rombak_inventaris.sql` sudah dijalankan (bucket dan policy storage) dan kamu sudah login |
-| Anggota tidak bisa kirim bukti kas | Berkas maksimal 10 MB, format PDF/PNG/JPG/WEBP |
-| Impor Excel "0 baris" | Pakai template (Impor Excel > Unduh Template). Kolom wajib: Divisi, Nama Barang, Jumlah |
-| Perintah `git` tidak dikenal | Tidak masalah, pakai GitHub Desktop |
+| "Invalid Server Actions request" saat dibuka lewat tunnel/HP | Sudah ditangani untuk `*.devtunnels.ms` di `next.config.js`. Tambahkan domain tunnel lain di `allowedOrigins` |
+| Link Drive ditolak "belum dibagikan" | Ubah akses umum ke "Siapa saja yang memiliki link" |
+| Ukuran Drive tidak diperiksa | Pasang `GOOGLE_API_KEY` (bagian C) |
+| Tidak bisa memberi peran BPR | Pastikan `04_fitur_lanjutan.sql` sudah dijalankan. Jika masih gagal, kirim hasil `select conname, pg_get_constraintdef(oid) from pg_constraint where conrelid='public.anggota'::regclass;` |
+| Tabel baru "tidak ditemukan" | Tunggu semenit atau jalankan `notify pgrst, 'reload schema';` |
 
 ## Struktur folder
 ```
-app/            halaman (publik di app/(publik), internal di app/<modul>)
-components/     komponen bersama (Shell, FormAksi, UnggahBerkas, ...)
-lib/            auth.js (peran), konten.js (isi situs), format.js, db.js, ...
-supabase/       skrip SQL 01-03
-public/         logo.png, topo.svg (pola peta kontur)
+app/            halaman (publik di app/(publik); internal di app/<modul>)
+components/     Shell, FormAksi, UnggahBerkas, ChatRoom, ...
+lib/            auth.js (peran), drive.js, berkas.js, chat.js, profil.js, konten.js (isi cadangan)
+supabase/       skrip SQL 01-05
 ```

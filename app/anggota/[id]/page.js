@@ -12,7 +12,7 @@ export default async function Edit({ params }) {
     sb.rpc('peran_saya'), sb.rpc('is_admin_anggota'), sb.rpc('is_ketua'),
     sb.from('anggota').select('*').eq('id', params.id).maybeSingle(),
     sb.from('angkatan').select('id,kode,nama').order('kode')])
-  if (!admin || !a) notFound()
+  if (!admin || !a || (a.peran === 'founder' && saya !== 'founder')) notFound()
   if (!bolehKelola(saya, a.peran)) redirect('/anggota')
   return (<Shell aktif="anggota" judul={`Edit: ${a.nama_adat}`}>
     <FormEdit a={a} angkatan={angkatan || []} ketua={!!ketua} bolehHapus={a.peran !== 'founder' && a.user_id !== user.id} />

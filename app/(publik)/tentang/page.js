@@ -1,8 +1,10 @@
 import Link from 'next/link'
-import { IDENTITAS, SEJARAH, DIVISI_PUBLIK, KADERISASI } from '@/lib/konten'
+import { getProfil } from '@/lib/profil'
+export const revalidate = 60
 export const metadata = { title: 'Tentang Rimbawana' }
 
-export default function Tentang() {
+export default async function Tentang() {
+  const { identitas: IDENTITAS, sejarah: SEJARAH, divisi: DIVISI_PUBLIK, kaderisasi: KADERISASI } = await getProfil()
   return (<>
     <section className="seksi">
       <h2 className="jdl">Sejarah Rimbawana</h2>
@@ -26,7 +28,7 @@ export default function Tentang() {
       <p className="lead">{IDENTITAS.lengkap} adalah organisasi mahasiswa di {IDENTITAS.kampus} yang berorientasi pada pendidikan dan lingkungan. Pengkaderan dijalankan berjenjang agar regenerasi tetap berkualitas di bidangnya.</p>
       <div className="kisi">
         {DIVISI_PUBLIK.map(d => (
-          <article className="kotak" key={d.kode}>
+          <article className="kotak" key={d.id || d.kode}>
             <div className="ik"><i className={`bi bi-${d.ikon}`} /></div>
             <h3>{d.nama}</h3><p>{d.isi}</p>
           </article>))}
@@ -39,7 +41,7 @@ export default function Tentang() {
         {KADERISASI.map(k => (
           <div className="pos" key={k.tahap}>
             <h3>{k.tahap}</h3><p>{k.isi}</p>
-            {k.sub && <ul>{k.sub.map(s => <li key={s}>{s}</li>)}</ul>}
+            {k.sub?.length > 0 && <ul>{k.sub.map(s => <li key={s}>{s}</li>)}</ul>}
           </div>))}
       </div>
     </section>

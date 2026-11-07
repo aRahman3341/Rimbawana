@@ -8,13 +8,13 @@ export const metadata = { title: 'Katalog Alat' }
 export default async function Katalog({ searchParams }) {
   const div = DIVISI[searchParams.divisi] ? searchParams.divisi : ''
   const cari = String(searchParams.q || '').replace(/[%_\\]/g, '').slice(0, 60)
-  let q = admin().from('v_stok_jenis').select('*').gt('total', 0).order('divisi').order('urut')
+  let q = admin().from('v_stok_jenis').select('*').gt('bebas', 0).eq('sembunyikan', false).order('divisi').order('urut')
   if (div) q = q.eq('divisi', div)
   if (cari) q = q.ilike('nama', `%${cari}%`)
   const daftar = ambil(await q)
   return (<section className="seksi">
     <h2 className="jdl">Katalog Alat</h2>
-    <p className="lead">Alat milik Rimbawana yang bisa dipinjam. Jumlah tersedia diperbarui otomatis.</p>
+    <p className="lead">Alat milik Rimbawana yang bisa dipinjam. Alat yang sedang dipinjam atau sudah dipesan otomatis hilang dari daftar ini.</p>
     <div className="tabs">
       <Link className={`tab ${!div ? 'aktif' : ''}`} href="/katalog">Semua</Link>
       {Object.entries(DIVISI).map(([k, t]) => <Link key={k} className={`tab ${div === k ? 'aktif' : ''}`} href={`/katalog?divisi=${k}`}>{t}</Link>)}
@@ -23,7 +23,7 @@ export default async function Katalog({ searchParams }) {
       {div && <input type="hidden" name="divisi" value={div} />}
       <input name="q" placeholder="Cari alat, mis. carabiner" defaultValue={cari} /><button>Cari</button>
     </form>
-    {daftar.length === 0 ? <p className="kosong">Tidak ada alat yang cocok.</p> : (
+    {daftar.length === 0 ? <p className="kosong">Tidak ada alat yang tersedia saat ini.</p> : (
       <div className="katalog">
         {daftar.map(j => (
           <article className="barang" key={j.id}>
@@ -32,8 +32,8 @@ export default async function Katalog({ searchParams }) {
               <span className="lencana coklat" style={{ justifySelf: 'start' }}>{DIVISI[j.divisi]}</span>
               <h3>{j.nama}</h3>
               {j.keterangan && <div className="ket">{j.keterangan}</div>}
-              <div><span className={`lencana ${j.tersedia > 0 ? 'hijau' : 'merah'}`}>{j.tersedia > 0 ? `Tersedia ${j.tersedia}` : 'Sedang habis'}</span> <small>dari {j.total} {j.satuan}</small></div>
-              {j.tersedia > 0 && <Link className="btn kecil" style={{ justifySelf: 'start' }} href={`/pinjam?jenis=${j.id}`}>Pinjam</Link>}
+              <div><span className="lencana hijau">Tersedia {j.bebas}</span> <small>{j.satuan}</small></div>
+              <Link className="btn kecil" style={{ justifySelf: 'start' }} href={`/pinjam?jenis=${j.id}`}>Pinjam</Link>
             </div>
           </article>))}
       </div>)}
