@@ -1,7 +1,15 @@
-# Rimbawana Web v0.4
+# Rimbawana Web v0.5
 
 Situs publik + sistem internal UKM Rimbawana UPI Kampus Cibiru.
 Stack: Next.js 14 + Supabase (Postgres, Auth, Storage) + Vercel gratis.
+
+## Baru di v0.5
+| Fitur | Keterangan |
+|---|---|
+| **Akses role diatur Founder** | Menu *Akses & CS Founder* (hanya terlihat Founder): matriks centang 10 izin x 6 peran, berlaku langsung tanpa menyentuh kode |
+| **Izin tambahan per orang** | Founder bisa memberi atau mencabut izin untuk satu orang saja, tanpa mengubah perannya |
+| **CS Founder** | Menu *CS Founder* untuk semua yang login: pengurus mengajukan permintaan akses atau bantuan. Founder menyetujui (izin langsung aktif) atau menolak dengan balasan. **Identitas Founder tidak pernah ditampilkan** |
+| **Jalan pintas minta akses** | Halaman yang hanya bisa dilihat (mis. BPR di Keuangan) menampilkan tombol *Minta akses*, dan halaman yang tertutup total langsung mengarahkan ke CS Founder dengan izin yang sudah terpilih |
 
 ## Baru di v0.4
 | Fitur | Keterangan |
@@ -33,14 +41,15 @@ Stack: Next.js 14 + Supabase (Postgres, Auth, Storage) + Vercel gratis.
 | **BPR** | **Hanya melihat** (barang, peminjaman, surat, kas, buku kas, RAB, chat) + memberi arahan |
 | Anggota | Lihat barang, bayar kas sendiri |
 
-Pembagian ini bisa diubah di satu tempat: `lib/auth.js` (objek `KELOMPOK`).
+Tabel ini adalah **pembagian bawaan**. Setelah `07_akses_cs_founder.sql` dijalankan, Founder mengubahnya langsung dari web (menu *Akses & CS Founder*). Sebelum itu dijalankan, aplikasi tetap berjalan memakai pembagian bawaan yang sama (`lib/auth.js`).
 
 ---
 ## A. Upgrade dari versi sebelumnya (sudah terpasang)
 1. Ekstrak ZIP, timpa isi folder repo (jangan hapus folder `.git`), commit dan push lewat GitHub Desktop.
 2. Supabase > SQL Editor, jalankan yang belum pernah dijalankan (semuanya aman diulang):
    * **`04_fitur_lanjutan.sql`** (dari v0.3): peran BPR, tabel baru, Becel menjadi Bendahara, batas ukuran Storage.
-   * **`06_angkatan_sejarah.sql`** (baru di v0.4): kolom tahun pada angkatan, singkatan jadi opsional. Data angkatan yang ada (mis. SPG) tidak berubah.
+   * **`06_angkatan_sejarah.sql`** (v0.4): kolom tahun pada angkatan, singkatan jadi opsional. Data angkatan yang ada (mis. SPG) tidak berubah.
+   * **`07_akses_cs_founder.sql`** (baru di v0.5): tabel izin per peran, izin per orang, dan permintaan CS Founder. Isi awal = pembagian bawaan; dijalankan ulang tidak menimpa perubahan Founder.
 3. (Opsional) buat akun Founder developer: ikuti **`supabase/05_founder_tersembunyi.sql`**.
 4. (Opsional, disarankan) pasang Kunci Google (bagian C).
 5. Restart `npm run dev`, atau tunggu Vercel selesai deploy.
@@ -48,7 +57,7 @@ Pembagian ini bisa diubah di satu tempat: `lib/auth.js` (objek `KELOMPOK`).
 
 ## B. Pasang dari nol
 1. Node.js 20 LTS. Perintah `git` tidak wajib (pakai GitHub Desktop).
-2. Supabase SQL Editor, jalankan berurutan: `01_rombak_inventaris.sql`, `02_seed_inventaris.sql`, `04_fitur_lanjutan.sql`, `06_angkatan_sejarah.sql` (lalu opsional `03` dan `05`).
+2. Supabase SQL Editor, jalankan berurutan: `01_rombak_inventaris.sql`, `02_seed_inventaris.sql`, `04_fitur_lanjutan.sql`, `06_angkatan_sejarah.sql`, `07_akses_cs_founder.sql` (lalu opsional `03` dan `05`).
 3. Salin `.env.example` menjadi `.env.local`, isi kunci Supabase (Project Settings > API). **Jangan commit `.env.local`.**
 4. `npm install` lalu `npm run dev`, buka http://localhost:3000.
 5. Deploy: Vercel > Import repo > isi Environment Variables yang sama (`NEXT_PUBLIC_SITE_URL` = alamat Vercel-mu).
@@ -62,6 +71,8 @@ Tanpa kunci, link Drive tetap diterima (halaman publiknya dicek terbuka), tetapi
 
 ## D. Cara memakai
 * **File surat/RAB/foto:** pilih tab *Unggah file* (maks 50 MB) atau *Link Google Drive* (maks 100 MB). Di Drive: Bagikan > Akses umum > **Siapa saja yang memiliki link** (Pelihat), lalu salin link. File di atas 50 MB otomatis diarahkan ke Drive.
+* **Akses & CS Founder (untuk Founder):** login sebagai akun Founder > menu *Sistem > Akses & CS Founder*. Bagian atas = permintaan masuk (Setujui memberi izin langsung ke peminta). *Izin per peran* = centang lalu Simpan. *Izin tambahan per orang* = beri izin ke satu orang. Dashboard Founder menampilkan jumlah permintaan baru.
+* **Minta akses (untuk pengurus):** menu *CS Founder* > pilih izin yang dibutuhkan > tulis alasan > Kirim. Maksimal 3 permintaan menunggu. Jawaban dan statusnya tampil di halaman yang sama.
 * **Data Angkatan:** menu *Master > Data Angkatan*. Klik sebuah tahun di papan atas untuk mengisinya. Satu angkatan = tahun + nama (+ singkatan jika ada). Banyak sekaligus: tempel satu baris satu angkatan, mis. `2005 | Nama Angkatan | SNG` (singkatan boleh dikosongkan). Angkatan yang masih dipakai anggota tidak bisa dihapus. Cerita sejarah tiap tahun ditulis di *Profil Situs*; keduanya otomatis bertemu di halaman Tentang.
 * **Ganti logo:** *Profil Situs* > Logo Rimbawana > pilih gambar (PNG transparan disarankan, maks 10 MB) > Ganti Logo.
 * **Galeri:** menu *Galeri Media* > Tambah Media. Video, album (link folder), dan foto besar lewat Drive. Tombol mata menyembunyikan dari situs publik.
@@ -84,5 +95,5 @@ Tanpa kunci, link Drive tetap diterima (halaman publiknya dicek terbuka), tetapi
 app/            halaman (publik di app/(publik); internal di app/<modul>)
 components/     Shell, FormAksi, UnggahBerkas, ChatRoom, ...
 lib/            auth.js (peran), drive.js, berkas.js, chat.js, profil.js, konten.js (isi cadangan)
-supabase/       skrip SQL 01-06
+supabase/       skrip SQL 01-07
 ```

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Shell from '@/components/Shell'
+import MintaAkses from '@/components/MintaAkses'
 import FormAksi from '@/components/FormAksi'
 import TombolAksi from '@/components/TombolAksi'
 import UnggahBerkas from '@/components/UnggahBerkas'
@@ -25,6 +26,7 @@ export default async function Surat({ searchParams }) {
   const [daftar, kegiatan] = await Promise.all([q.then(ambil), adm.from('kegiatan_rab').select('id,nama').order('created_at', { ascending: false }).then(ambil)])
   const url = await urlArsip(daftar.map(s => s.file_path))
   return (<Shell aktif="surat" judul="Arsip Surat">
+    {!(kelola) && <MintaAkses izin="surat" />}
     <form className="baris" style={{ alignItems: 'end' }}>
       <div><label>Arah</label><select name="arah" defaultValue={arah}><option value="">Semua</option><option value="keluar">Keluar</option><option value="masuk">Masuk</option></select></div>
       <div><label>Jenis</label><select name="kategori" defaultValue={kat}><option value="">Semua</option>{Object.entries(KATEGORI_SURAT).map(([k, t]) => <option key={k} value={k}>{t}</option>)}</select></div>

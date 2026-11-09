@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Shell from '@/components/Shell'
+import MintaAkses from '@/components/MintaAkses'
 import FormAksi from '@/components/FormAksi'
 import UnggahBerkas from '@/components/UnggahBerkas'
 import { wajibMasuk, boleh } from '@/lib/auth'
@@ -21,6 +22,7 @@ export default async function Barang({ searchParams }) {
   const [daftar, lokasi] = await Promise.all([q.then(ambil), adm.from('lokasi_simpan').select('id,nama').order('nama').then(ambil)])
   const jml = (k) => daftar.reduce((a, j) => a + Number(j[k]), 0)
   return (<Shell aktif="barang" judul="Data Barang">
+    {!(kelola) && <MintaAkses izin="inventaris" />}
     <div className="cards">
       <div className="info"><i className="bi bi-box-seam" /><div><h3>{daftar.length}</h3><span>Jenis barang</span></div></div>
       <div className="info"><i className="bi bi-stack" /><div><h3>{jml('total')}</h3><span>Total unit</span></div></div>

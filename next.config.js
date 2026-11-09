@@ -3,10 +3,8 @@ module.exports = {
   experimental: {
     serverActions: {
       bodySizeLimit: '4mb',
-      allowedOrigins: [
-        'localhost:3000',
-        'l3kq0zqw-3000.asse.devtunnels.ms',
-      ],
+      // Izinkan alamat tunnel hanya saat development (port forwarding VS Code / uji dari HP)
+      allowedOrigins: process.env.NODE_ENV === 'development' ? ['*.devtunnels.ms'] : [],
     },
     serverComponentsExternalPackages: ['exceljs'],
   },

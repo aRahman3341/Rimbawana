@@ -4,7 +4,7 @@ import FormAksi from '@/components/FormAksi'
 import { wajibMasuk, boleh } from '@/lib/auth'
 import { admin, ambil } from '@/lib/db'
 import { daftarRuang, kandidatRuang } from '@/lib/chat'
-import { PERAN } from '@/lib/akun'
+import { PERAN, namaPeran } from '@/lib/akun'
 import { buatRuang } from './actions'
 export const dynamic = 'force-dynamic'
 
@@ -20,7 +20,7 @@ export default async function Chat() {
     return { ...r, belum: count || 0, akhir: akhir?.[0] }
   }))
   const kelola = boleh(saya, 'chatAdmin')
-  const kandidat = kelola ? ambil(await kandidatRuang(adm)).filter(k => k.id !== saya.id) : []
+  const kandidat = kelola ? (await kandidatRuang(adm)).filter(k => k.id !== saya.id) : []
   return (<Shell aktif="chat" judul="Chat Pengurus">
     <p className="redup" style={{ marginTop: 0 }}>Ruang percakapan untuk pengurus dan BPR. Pesan baru muncul otomatis. Rapat online dibagikan sebagai kartu Google Meet.</p>
     {kelola && <details className="tambah"><summary className="btn"><i className="bi bi-plus-lg" /> Buat Ruang</summary>
@@ -29,7 +29,7 @@ export default async function Chat() {
           <div><label>Jenis</label><select name="tipe"><option value="khusus">Khusus (anggota dipilih)</option><option value="umum">Umum (semua pengurus dan BPR)</option></select></div></div>
         <label>Deskripsi</label><input name="deskripsi" maxLength={200} />
         <label>Anggota ruang khusus</label>
-        <div className="grid">{kandidat.map(k => <label key={k.id} style={{ fontWeight: 400, margin: '2px 0' }}><input type="checkbox" name="anggota" value={k.id} style={{ marginRight: 8 }} />{k.nama_adat} <small>({PERAN[k.peran]})</small></label>)}</div>
+        <div className="grid">{kandidat.map(k => <label key={k.id} style={{ fontWeight: 400, margin: '2px 0' }}><input type="checkbox" name="anggota" value={k.id} style={{ marginRight: 8 }} />{k.nama_adat} <small>({namaPeran(k.peran)})</small></label>)}</div>
       </FormAksi></details>}
     <div className="daftar-ruang">
       {info.length === 0 && <p className="kosong">Belum ada ruang chat untukmu.</p>}

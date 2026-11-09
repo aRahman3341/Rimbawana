@@ -1,4 +1,5 @@
 import Shell from '@/components/Shell'
+import MintaAkses from '@/components/MintaAkses'
 import FormAksi from '@/components/FormAksi'
 import TombolAksi from '@/components/TombolAksi'
 import UnggahBerkas from '@/components/UnggahBerkas'
@@ -15,6 +16,7 @@ export default async function Media() {
   const edit = boleh(saya, 'profil')
   const daftar = ambil(await admin().from('media_rimbawana').select('*').order('created_at', { ascending: false }).limit(300))
   return (<Shell aktif="media" judul="Galeri Media">
+    {!(edit) && <MintaAkses izin="profil" />}
     <p className="redup" style={{ marginTop: 0 }}>Foto dan video Rimbawana disimpan di Google Drive. Di sini hanya dicatat tautannya, lalu tampil di halaman <b>Galeri</b> situs publik.</p>
     {edit && <details className="tambah"><summary className="btn"><i className="bi bi-plus-lg" /> Tambah Media</summary>
       <FormAksi aksi={tambahMedia} className="form" tombol="Simpan Media">

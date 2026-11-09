@@ -17,6 +17,7 @@ export default async function Dashboard() {
   const adm = admin(), hari = hariIni(), logo = await getLogo()
   const pengurus = boleh(saya, 'lihat'), inv = boleh(saya, 'lihatInv'), ketua = boleh(saya, 'keputusan')
   const ruangIds = (await daftarRuang(adm, saya)).map(r => r.id)
+  const permintaanBaru = saya.peran === 'founder' ? await adm.from('akses_permintaan').select('id', { count: 'exact', head: true }).eq('status', 'baru').then(r => r.count || 0) : 0
   const [anggota, stok, menunggu, telat, kasSaya, buku, tunggak, rab, pinjaman, arahan, rapat] = await Promise.all([
     adm.from('anggota').select('id', { count: 'exact', head: true }).eq('aktif', true).neq('jabatan', 'alumni').neq('peran', 'founder').then(r => r.count || 0),
     adm.from('v_stok_jenis').select('total,tersedia,dipinjam,tidak_layak').then(ambil),
@@ -40,6 +41,7 @@ export default async function Dashboard() {
       <Link className="btn kuning kecil" href="/">Lihat situs publik</Link>
     </div>
     <div className="cards">
+      {saya.peran === 'founder' && <Kartu href="/akses" ikon="headset" n={permintaanBaru} t="Permintaan CS Founder baru" kelas={permintaanBaru ? 'api' : ''} />}
       <Kartu href="/anggota" ikon="people" n={anggota} t="Anggota aktif" />
       <Kartu href="/barang" ikon="box-seam" n={`${s('tersedia')} / ${s('total')}`} t="Unit tersedia / total" kelas="biru" />
       <Kartu href="/barang" ikon="arrow-left-right" n={s('dipinjam')} t="Sedang dipinjam" kelas="api" />

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { getSaya, boleh } from '@/lib/auth'
 import { admin, teks } from '@/lib/db'
-import { aksesRuang, MEET_RE } from '@/lib/chat'
+import { aksesRuang, MEET_RE, bolehChat } from '@/lib/chat'
 
 const segar = (id) => { revalidatePath('/chat'); if (id) revalidatePath(`/chat/${id}`); revalidatePath('/dashboard') }
 async function ruangTulis(fd) {
@@ -66,8 +66,7 @@ async function ruangAdmin(fd) {
 export async function tambahAnggotaRuang(fd) {
   const z = await ruangAdmin(fd); if (!z) return
   const aid = teks(fd, 'anggota_id'); if (!aid) return
-  const { data: t } = await z.adm.from('anggota').select('peran').eq('id', aid).maybeSingle()
-  if (!t || t.peran === 'founder' || t.peran === 'anggota') return          // hanya pengurus dan BPR
+  if (!(await bolehChat(z.adm, aid))) return          // hanya yang punya izin melihat halaman pengurus (diatur Founder)
   await z.adm.from('chat_anggota').upsert({ ruang_id: z.id, anggota_id: aid, admin: false }); segar(z.id)
 }
 export async function keluarkanAnggotaRuang(fd) {

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Shell from '@/components/Shell'
+import MintaAkses from '@/components/MintaAkses'
 import FormAksi from '@/components/FormAksi'
 import UnggahBerkas from '@/components/UnggahBerkas'
 import { wajibMasuk, boleh } from '@/lib/auth'
@@ -16,6 +17,7 @@ export default async function Kegiatan() {
     adm.from('buku_kas').select('kegiatan_id,jumlah').eq('tipe', 'keluar').not('kegiatan_id', 'is', null).then(ambil)])
   const real = {}; keluar.forEach(t => { real[t.kegiatan_id] = (real[t.kegiatan_id] || 0) + Number(t.jumlah) })
   return (<Shell aktif="kegiatan" judul="RAB Kegiatan">
+    {!(boleh(saya, 'pengurus')) && <MintaAkses izin="pengurus" />}
     {boleh(saya, 'pengurus') && <details className="tambah"><summary className="btn"><i className="bi bi-plus-lg" /> Ajukan Kegiatan &amp; RAB</summary>
       <FormAksi aksi={tambahKegiatan} className="form" tombol="Simpan" reset={false}>
         <div className="grid">

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Shell from '@/components/Shell'
+import MintaAkses from '@/components/MintaAkses'
 import FormAksi from '@/components/FormAksi'
 import TombolAksi from '@/components/TombolAksi'
 import UnggahBerkas from '@/components/UnggahBerkas'
@@ -23,6 +24,7 @@ export default async function Keuangan({ searchParams }) {
   const jml = (f) => semua.filter(f).reduce((a, t) => a + Number(t.jumlah), 0)
   const masuk = jml(t => t.tipe === 'masuk'), keluar = jml(t => t.tipe === 'keluar')
   return (<Shell aktif="keuangan" judul="Buku Kas">
+    {!(uang) && <MintaAkses izin="uang" />}
     <div className="cards">
       <div className="info"><i className="bi bi-wallet2" /><div><h3 style={{ fontSize: '1.35rem' }}>{rupiah(masuk - keluar)}</h3><span>Saldo saat ini</span></div></div>
       <div className="info biru"><i className="bi bi-arrow-down-circle" /><div><h3 style={{ fontSize: '1.35rem' }}>{rupiah(masuk)}</h3><span>Total pemasukan</span></div></div>

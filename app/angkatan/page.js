@@ -1,4 +1,5 @@
 import Shell from '@/components/Shell'
+import MintaAkses from '@/components/MintaAkses'
 import FormAksi from '@/components/FormAksi'
 import { wajibMasuk, boleh } from '@/lib/auth'
 import { admin, ambil } from '@/lib/db'
@@ -43,6 +44,7 @@ export default async function Angkatan({ searchParams }) {
   </tr>)
 
   return (<Shell aktif="angkatan" judul="Data Angkatan">
+    {!(edit) && <MintaAkses izin="profil" />}
     <div className="form">
       <h2>Catatan angkatan per tahun</h2>
       <p style={{ margin: 0 }}>Isi nama angkatan untuk setiap tahun sejak {mulai}. Data ini otomatis tampil di halaman <b>Tentang &gt; Sejarah</b> dan menjadi pilihan angkatan pada <b>data anggota</b>. <b>Singkatan boleh dikosongkan.</b></p>

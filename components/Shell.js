@@ -22,6 +22,9 @@ const MENU = [
   { label: 'Situs Publik', icon: 'globe2', izin: 'lihat', items: [
     { id: 'profil', label: 'Profil Situs', href: '/profil', izin: 'profil' },
     { id: 'media', label: 'Galeri Media', href: '/media' } ] },
+  { label: 'Sistem', icon: 'shield-lock', izin: 'founder', items: [
+    { id: 'akses', label: 'Akses & CS Founder', href: '/akses' } ] },
+  { id: 'bantuan', label: 'CS Founder', icon: 'headset', href: '/bantuan', bukanFounder: true },
   { label: 'Master', icon: 'database', items: [
     { id: 'anggota', label: 'Anggota', href: '/anggota' },
     { id: 'angkatan', label: 'Data Angkatan', href: '/angkatan', izin: 'lihat' },
@@ -36,7 +39,7 @@ export default async function Shell({ aktif, judul, children }) {
   const peran = saya && PERAN[saya.peran] !== '-' ? PERAN[saya.peran] : 'Anggota'
   const menu = MENU.map(g => g.items
     ? { ...g, items: g.items.filter(i => boleh(saya, i.izin)) }
-    : g).filter(g => (!g.izin || boleh(saya, g.izin)) && (!g.items || g.items.length))
+    : g).filter(g => (!g.izin || boleh(saya, g.izin)) && (!g.items || g.items.length) && !(g.bukanFounder && saya?.peran === 'founder'))
   return (<>
     <input id="menu" type="checkbox" hidden />
     <div className="app">
