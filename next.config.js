@@ -1,10 +1,13 @@
+
 /** @type {import('next').NextConfig} */
 module.exports = {
   experimental: {
     serverActions: {
       bodySizeLimit: '4mb',
-      // Izinkan alamat tunnel hanya saat development (port forwarding VS Code / uji dari HP)
-      allowedOrigins: process.env.NODE_ENV === 'development' ? ['*.devtunnels.ms'] : [],
+      allowedOrigins: [
+        'localhost:3000',
+        'l3kq0zqw-3000.asse.devtunnels.ms',
+      ],
     },
     serverComponentsExternalPackages: ['exceljs'],
   },
