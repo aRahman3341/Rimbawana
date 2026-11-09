@@ -31,7 +31,7 @@ export async function simpanAnggota(_prev, fd) {
     nta: v('nta'), no_hp: v('no_hp'), email: v('email'), aktif: fd.get('aktif') === 'on' }
   if (!upd.nama_lengkap || !upd.nama_adat) return { error: 'Nama lengkap dan nama adat wajib diisi.' }
   if (t.user_id === z.uid) upd.aktif = true            // tidak bisa menonaktifkan diri sendiri
-  if (ketua && fd.has('angkatan_id')) upd.angkatan_id = v('angkatan_id')
+  if (fd.has('angkatan_id')) upd.angkatan_id = v('angkatan_id')    // Ketua Adat dan Sekretaris
   if (!founder) {
     if (ketua && fd.has('peran')) upd.peran = jabatan === 'pengurus' ? (v('peran') || 'anggota') : 'anggota'
     else if (jabatan !== 'pengurus') upd.peran = 'anggota'

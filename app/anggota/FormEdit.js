@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useFormState } from 'react-dom'
 import { simpanAnggota, resetPassword, hapusAnggota } from './kelola'
 import { STATUS, PERAN } from '@/lib/akun'
+import { labelAngkatan } from '@/lib/angkatan'
 export default function FormEdit({ a, angkatan, ketua, bolehHapus }) {
   const [s, aksi] = useFormState(simpanAnggota, null)
   const [r, aksiR] = useFormState(resetPassword, null)
@@ -15,7 +16,7 @@ export default function FormEdit({ a, angkatan, ketua, bolehHapus }) {
         <div><label>Status</label><select name="status" defaultValue={a.status || ''}><option value="">-</option>{Object.entries(STATUS).map(([k, t]) => <option key={k} value={k}>{t}</option>)}</select></div>
         <div><label>Jabatan</label><select name="jabatan" defaultValue={a.jabatan}><option value="anggota">Anggota</option><option value="pengurus">Pengurus</option><option value="alumni">{founder ? 'Alumni' : 'Alumni (akun dihapus)'}</option></select></div>
         {ketua && !founder && <div><label>Peran pengurus</label><select name="peran" defaultValue={a.peran}>{Object.entries(PERAN).filter(([k]) => k !== 'founder').map(([k, t]) => <option key={k} value={k}>{t}</option>)}</select></div>}
-        {ketua && <div><label>Angkatan</label><select name="angkatan_id" defaultValue={a.angkatan_id || ''}><option value="">-</option>{angkatan.map(g => <option key={g.id} value={g.id}>{g.kode} - {g.nama}</option>)}</select></div>}
+        {<div><label>Angkatan</label><select name="angkatan_id" defaultValue={a.angkatan_id || ''}><option value="">-</option>{angkatan.map(g => <option key={g.id} value={g.id}>{labelAngkatan(g)}</option>)}</select></div>}
         <div><label>NTA</label><input name="nta" defaultValue={a.nta || ''} /></div>
         <div><label>No HP</label><input name="no_hp" defaultValue={a.no_hp || ''} /></div>
         <div><label>Email (opsional)</label><input name="email" type="email" defaultValue={a.email || ''} /></div>

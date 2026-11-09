@@ -13,8 +13,7 @@ export async function tambahAnggota(_prev, fd) {
   const peran = jabatan === 'pengurus' ? (v('peran') || 'anggota') : 'anggota'
   if (peran === 'founder') return { error: 'Peran ini tidak bisa dibuat lewat web.' }
   const angkatan_id = v('angkatan_id')
-  if (!ketua && (peran !== 'anggota' || angkatan_id))
-    return { error: 'Peran pengurus dan angkatan hanya bisa diisi Ketua Adat.' }
+  if (!ketua && peran !== 'anggota') return { error: 'Peran pengurus hanya bisa diisi Ketua Adat.' }
   const password = String(fd.get('password') || '')
   const nama_adat = v('nama_adat')
   if (!v('nama_lengkap') || !nama_adat) return { error: 'Nama lengkap dan nama adat wajib diisi.' }

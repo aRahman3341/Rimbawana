@@ -24,7 +24,7 @@ export default async function InfoUnit({ params }) {
         <span className={`lencana ${u.status === 'tersedia' ? 'hijau' : 'kuning'}`}>{u.status === 'tersedia' ? 'Tersedia' : u.status === 'dipinjam' ? 'Sedang dipinjam' : 'Nonaktif'}</span></p>
       {u.pemilik && <p style={{ marginTop: 10 }}>Pinjaman dari <b>{u.pemilik.nama}</b>{u.batas_kembali ? `, dikembalikan sebelum ${tgl(u.batas_kembali)}` : ''}.</p>}
       {u.keterangan && <p style={{ marginTop: 10 }}>{u.keterangan}</p>}
-      {bisa && <p style={{ marginTop: 16 }}><Link className="btn" href="/katalog">Lihat katalog &amp; pinjam</Link></p>}
+      {bisa && <p style={{ marginTop: 16 }}><Link className="btn" href="/pinjam">Pinjam alat</Link></p>}
     </div>
   </section>)
 }

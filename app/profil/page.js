@@ -1,16 +1,17 @@
 import Shell from '@/components/Shell'
 import FormAksi from '@/components/FormAksi'
 import TombolAksi from '@/components/TombolAksi'
+import UnggahBerkas from '@/components/UnggahBerkas'
 import { wajibMasuk } from '@/lib/auth'
 import { admin, ambil } from '@/lib/db'
-import { getProfil, IKON } from '@/lib/profil'
-import { simpanIdentitas, simpanSejarah, hapusSejarah, simpanDivisi, hapusDivisi, simpanKaderisasi, hapusKaderisasi } from './actions'
+import { getProfil, IKON, LOGO_BAWAAN } from '@/lib/profil'
+import { simpanIdentitas, simpanLogo, kembalikanLogo, simpanSejarah, hapusSejarah, simpanDivisi, hapusDivisi, simpanKaderisasi, hapusKaderisasi } from './actions'
 export const dynamic = 'force-dynamic'
 
 export default async function Profil() {
   await wajibMasuk('profil')
   const adm = admin()
-  const { identitas: i } = await getProfil()
+  const { identitas: i, logo } = await getProfil()
   const [sejarah, divisi, kader] = await Promise.all([
     adm.from('profil_sejarah').select('*').order('urut').order('created_at').then(ambil),
     adm.from('profil_divisi').select('*').order('urut').then(ambil),
@@ -19,6 +20,17 @@ export default async function Profil() {
   return (<Shell aktif="profil" judul="Profil Situs">
     <p className="redup" style={{ marginTop: 0 }}>Semua yang tampil di halaman Beranda dan Tentang bisa diubah di sini. Perubahan langsung tampil di situs publik.</p>
 
+    <div className="form" style={{ display: 'flex', gap: 18, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+      <div style={{ textAlign: 'center' }}><img src={logo} alt="Logo saat ini" style={{ height: 120, width: 'auto', background: 'var(--hutan)', borderRadius: 14, padding: 12 }} /><br /><small className="redup">Logo saat ini</small></div>
+      <div style={{ flex: 1, minWidth: 240 }}>
+        <FormAksi aksi={simpanLogo} tombol="Ganti Logo" reset={false}>
+          <h2>Logo Rimbawana</h2>
+          <UnggahBerkas name="logo" bucket="foto" folder="logo" accept="image/png,image/jpeg,image/webp" label="Gambar logo baru" bantuan="Disarankan PNG berlatar transparan, maks 10 MB. Tampil di navigasi, beranda, login, dan menu admin." />
+        </FormAksi>
+        {logo !== LOGO_BAWAAN && <div style={{ marginTop: 10 }}><TombolAksi aksi={kembalikanLogo} teks="Kembalikan logo bawaan" cls="kecil abu" konfirmasi="Kembalikan ke logo bawaan?" /></div>}
+      </div>
+    </div>
+
     <FormAksi aksi={simpanIdentitas} className="form" tombol="Simpan Identitas" reset={false}>
       <h2>Identitas dan kontak</h2>
       <div className="grid">
@@ -26,6 +38,7 @@ export default async function Profil() {
         <div><label>Nama lengkap organisasi</label><input name="lengkap" defaultValue={i.lengkap} required /></div>
         <div><label>Kampus</label><input name="kampus" defaultValue={i.kampus} /></div>
         <div><label>Email</label><input name="email" type="email" defaultValue={i.email} /></div>
+        <div><label>Tahun berdiri</label><input name="tahun_berdiri" type="number" min="1990" max={new Date().getFullYear()} defaultValue={i.tahun_berdiri} required /></div>
       </div>
       <label>Alamat sekretariat</label><input name="alamat" defaultValue={i.alamat} />
       <label>Tagline</label><input name="tagline" defaultValue={i.tagline} />
@@ -34,7 +47,8 @@ export default async function Profil() {
       <small>Ikon contoh: instagram, youtube, tiktok, whatsapp, facebook, twitter-x.</small>
     </FormAksi>
 
-    <h2 style={{ margin: '26px 0 10px' }}>Sejarah Rimbawana</h2>
+    <h2 style={{ margin: '26px 0 4px' }}>Sejarah Rimbawana</h2>
+    <p className="redup" style={{ margin: '0 0 10px' }}>Cerita per tahun. Nama angkatan tiap tahun diisi di menu <a href="/angkatan">Data Angkatan</a> dan otomatis tampil di halaman sejarah.</p>
     {sejarah.map(s => <div key={s.id} className="form"><FormAksi aksi={simpanSejarah} tombol="Simpan" kecil reset={false}>
       <input type="hidden" name="id" value={s.id} />
       <div className="grid"><div><label>Tahun</label><input name="tahun" defaultValue={s.tahun || ''} /></div><div><label>Judul</label><input name="judul" defaultValue={s.judul || ''} /></div><div><label>Urutan</label><input name="urut" type="number" defaultValue={s.urut} /></div></div>

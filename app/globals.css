@@ -143,3 +143,25 @@ a.info:hover{background:#fff}.info>i{font-size:1.4rem;width:50px;height:50px;fle
 .ruang .tx{flex:1;min-width:0}.ruang .tx b{display:block}.ruang .tx small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .titik{background:var(--api);color:#2a1a05;border-radius:99px;min-width:22px;height:22px;display:grid;place-items:center;font-size:.75rem;font-weight:800;padding:0 6px}
 .daftar-ruang{display:grid;gap:10px;margin-bottom:18px}
+
+/* ===== Sejarah per tahun ===== */
+.lompat{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 20px;padding:10px;background:var(--kertas2);border:1px solid var(--garis);border-radius:14px;max-height:120px;overflow:auto}
+.lompat a{padding:3px 10px;border-radius:99px;background:var(--embun);color:var(--hutan);text-decoration:none;font-size:.82rem;font-weight:700}.lompat a:hover{background:var(--api);color:#2a1a05}
+.riwayat{display:grid;gap:0;border-left:3px dashed var(--lumut);margin-left:6px}
+.thn{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:0 0 22px 18px;position:relative;scroll-margin-top:80px}
+.thn::before{content:"";position:absolute;left:-10px;top:10px;width:14px;height:14px;border-radius:50%;background:var(--api);box-shadow:0 0 0 4px var(--kertas)}
+.thn .th{font-family:var(--display);color:var(--tanah);letter-spacing:.05em;font-size:1.6rem;line-height:1.2}
+.thn .cerita+.cerita{margin-top:10px}.thn h3{margin:0 0 2px;font-size:1.05rem}.thn p{margin:0;white-space:pre-line}
+.thn .angk{margin-top:8px}.thn .angk small{display:block;color:var(--redup);font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:.7rem;margin-bottom:4px}
+.chip{display:inline-block;margin:0 6px 6px 0;padding:4px 12px;border-radius:99px;background:var(--hutan);color:#f3dfb2;font-size:.86rem;font-weight:600}
+@media(max-width:600px){.thn{grid-template-columns:1fr;gap:2px}.thn .th{font-size:1.3rem}}
+
+/* ===== Pinjam alat (sederhana) ===== */
+.cari-alat{margin-bottom:10px}
+.alat-daftar{background:var(--kertas2);border:1px solid var(--garis);border-radius:14px;overflow:hidden;max-height:56vh;overflow-y:auto}
+.alat-grup{position:sticky;top:0;z-index:1;background:#ece6d1;padding:6px 14px;font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#4b5042}
+.alat-baris{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #ebe5d2}.alat-baris:last-child{border-bottom:0}
+.alat-baris.dipilih{background:#eaf3df}.alat-nama{flex:1;min-width:0;display:grid}.alat-nama small{color:var(--redup);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stepper{display:flex;align-items:center;gap:2px;flex:none;background:#fff;border:1.5px solid var(--garis);border-radius:99px;padding:2px}
+.stepper button{width:34px;height:34px;padding:0;border-radius:50%;font-size:1.2rem;line-height:1;display:grid;place-items:center}.stepper button:disabled{background:#d9d4c2;opacity:1;cursor:not-allowed}
+.stepper span{min-width:28px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}

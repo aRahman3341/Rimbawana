@@ -4,10 +4,10 @@ import { getProfil } from '@/lib/profil'
 export const revalidate = 60
 
 export default async function Beranda() {
-  const { identitas: IDENTITAS, divisi: DIVISI_PUBLIK, kaderisasi: KADERISASI } = await getProfil()
+  const { identitas: IDENTITAS, divisi: DIVISI_PUBLIK, kaderisasi: KADERISASI, logo } = await getProfil()
   return (<>
     <section className="hero">
-      <img className="lambang" src="/logo.png" alt="Lambang Rimbawana" />
+      <img className="lambang" src={logo} alt="Lambang Rimbawana" />
       <h1>{IDENTITAS.nama}</h1>
       <p className="sub">{IDENTITAS.lengkap}<br />{IDENTITAS.kampus}</p>
       <span className="tag"><i className="bi bi-compass" /> {IDENTITAS.tagline}</span>
@@ -46,8 +46,8 @@ export default async function Beranda() {
     <section className="seksi">
       <div className="pita">
         <div><h3>Butuh peralatan untuk berkegiatan?</h3>
-          <p>Lihat alat yang tersedia dan ajukan peminjaman tanpa perlu login. Pengurus perlengkapan akan memverifikasi permintaanmu.</p></div>
-        <Link className="btn kuning" href="/katalog">Lihat Katalog Alat</Link>
+          <p>Pilih alat yang tersedia dan ajukan peminjaman tanpa perlu login.</p></div>
+        <Link className="btn kuning" href="/pinjam">Pinjam Alat</Link>
       </div>
     </section>
   </>)

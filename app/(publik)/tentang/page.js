@@ -1,26 +1,39 @@
 import Link from 'next/link'
-import { getProfil } from '@/lib/profil'
-export const revalidate = 60
+import { getProfil, getAngkatanPublik } from '@/lib/profil'
+import { labelAngkatan } from '@/lib/angkatan'
 export const metadata = { title: 'Tentang Rimbawana' }
 
+const tahunDari = (t) => { const m = /\d{4}/.exec(t || ''); return m ? Number(m[0]) : null }
+
 export default async function Tentang() {
-  const { identitas: IDENTITAS, sejarah: SEJARAH, divisi: DIVISI_PUBLIK, kaderisasi: KADERISASI } = await getProfil()
+  const [{ identitas: IDENTITAS, sejarah, divisi: DIVISI_PUBLIK, kaderisasi: KADERISASI }, angkatan] = await Promise.all([getProfil(), getAngkatanPublik()])
+  // Susun sejarah per tahun: cerita dan nama angkatan digabung berdasarkan tahunnya.
+  const peta = new Map(), tanpaTahun = []
+  const ambil = (t) => { if (!peta.has(t)) peta.set(t, { cerita: [], angkatan: [] }); return peta.get(t) }
+  sejarah.forEach(s => { const t = tahunDari(s.tahun); t ? ambil(t).cerita.push(s) : tanpaTahun.push(s) })
+  angkatan.forEach(a => ambil(a.tahun).angkatan.push(a))
+  const tahun = [...peta.keys()].sort((a, b) => a - b)
+  const sekarang = new Date().getFullYear()
+  const kosong = tahun.length === 0 && tanpaTahun.length === 0
+
   return (<>
     <section className="seksi">
       <h2 className="jdl">Sejarah Rimbawana</h2>
-      <p className="lead">Perjalanan terbentuknya {IDENTITAS.lengkap}.</p>
-      {SEJARAH.length ? (
-        <div className="sejarah">
-          {SEJARAH.map((s, i) => (
-            <div className="itm" key={i}>
-              {s.tahun && <div className="th">{s.tahun}</div>}
-              {s.judul && <h3>{s.judul}</h3>}
-              <p>{s.isi}</p>
-            </div>))}
-        </div>
-      ) : (
-        <div className="kotak"><p>Sejarah terbentuknya Rimbawana akan segera dilengkapi di halaman ini.</p></div>
-      )}
+      <p className="lead">Perjalanan {IDENTITAS.lengkap} sejak {IDENTITAS.tahun_berdiri} hingga {sekarang}, beserta angkatan di tiap tahunnya.</p>
+      {kosong ? <div className="kotak"><p>Sejarah terbentuknya Rimbawana akan segera dilengkapi di halaman ini.</p></div> : (<>
+        {tahun.length > 1 && <nav className="lompat" aria-label="Lompat ke tahun">{tahun.map(t => <a key={t} href={`#t${t}`}>{t}</a>)}</nav>}
+        <div className="riwayat">
+          {tanpaTahun.map((s, i) => (
+            <div className="thn" key={`x${i}`}><div className="th">&bull;</div><div className="isi">{s.judul && <h3>{s.judul}</h3>}<p>{s.isi}</p></div></div>))}
+          {tahun.map(t => { const d = peta.get(t)
+            return (<div className="thn" id={`t${t}`} key={t}>
+              <div className="th">{t}</div>
+              <div className="isi">
+                {d.cerita.map(s => <div key={s.id || s.judul} className="cerita">{s.judul && <h3>{s.judul}</h3>}<p>{s.isi}</p></div>)}
+                {d.angkatan.length > 0 && <div className="angk"><small>Angkatan {t}</small>
+                  <div>{d.angkatan.map(a => <span key={a.id} className="chip" title={a.keterangan || undefined}>{labelAngkatan(a)}</span>)}</div></div>}
+              </div></div>) })}
+        </div></>)}
     </section>
 
     <section className="seksi">

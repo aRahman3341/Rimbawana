@@ -11,7 +11,7 @@ export default async function Edit({ params }) {
   const [{ data: saya }, { data: admin }, { data: ketua }, { data: a }, { data: angkatan }] = await Promise.all([
     sb.rpc('peran_saya'), sb.rpc('is_admin_anggota'), sb.rpc('is_ketua'),
     sb.from('anggota').select('*').eq('id', params.id).maybeSingle(),
-    sb.from('angkatan').select('id,kode,nama').order('kode')])
+    sb.from('angkatan').select('id,kode,nama,tahun').order('tahun', { nullsFirst: false }).order('nama')])
   if (!admin || !a || (a.peran === 'founder' && saya !== 'founder')) notFound()
   if (!bolehKelola(saya, a.peran)) redirect('/anggota')
   return (<Shell aktif="anggota" judul={`Edit: ${a.nama_adat}`}>

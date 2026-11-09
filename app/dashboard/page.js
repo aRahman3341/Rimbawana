@@ -4,6 +4,7 @@ import { wajibMasuk, boleh } from '@/lib/auth'
 import { admin, ambil } from '@/lib/db'
 import { rupiah, tgl, hariIni, tambahHari, waLink } from '@/lib/format'
 import { daftarRuang } from '@/lib/chat'
+import { getLogo } from '@/lib/profil'
 export const dynamic = 'force-dynamic'
 
 const Kartu = ({ href, ikon, n, t, kelas = '', kecil }) => {
@@ -13,7 +14,7 @@ const Kartu = ({ href, ikon, n, t, kelas = '', kecil }) => {
 
 export default async function Dashboard() {
   const saya = await wajibMasuk()
-  const adm = admin(), hari = hariIni()
+  const adm = admin(), hari = hariIni(), logo = await getLogo()
   const pengurus = boleh(saya, 'lihat'), inv = boleh(saya, 'lihatInv'), ketua = boleh(saya, 'keputusan')
   const ruangIds = (await daftarRuang(adm, saya)).map(r => r.id)
   const [anggota, stok, menunggu, telat, kasSaya, buku, tunggak, rab, pinjaman, arahan, rapat] = await Promise.all([
@@ -34,7 +35,7 @@ export default async function Dashboard() {
 
   return (<Shell aktif="dashboard" judul="Dashboard">
     <div className="form" style={{ marginBottom: 18, display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-      <img src="/logo.png" alt="" style={{ height: 54 }} />
+      <img src={logo} alt="" style={{ height: 54 }} />
       <div style={{ flex: 1 }}><h2 style={{ margin: 0, fontSize: '1.25rem' }}>Selamat datang, {saya.nama_adat}</h2><span className="redup">Pusat inventaris, surat, dan keuangan UKM Rimbawana.</span></div>
       <Link className="btn kuning kecil" href="/">Lihat situs publik</Link>
     </div>

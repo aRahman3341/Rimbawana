@@ -1,7 +1,16 @@
-# Rimbawana Web v0.3
+# Rimbawana Web v0.4
 
 Situs publik + sistem internal UKM Rimbawana UPI Kampus Cibiru.
 Stack: Next.js 14 + Supabase (Postgres, Auth, Storage) + Vercel gratis.
+
+## Baru di v0.4
+| Fitur | Keterangan |
+|---|---|
+| **Pinjam alat lebih sederhana** | Katalog dan formulir digabung jadi satu halaman: daftar ringkas dengan tombol +/-, lalu 5 isian singkat. `/katalog` otomatis mengarah ke `/pinjam` |
+| **Ganti logo** | Menu *Profil Situs* > bagian **Logo Rimbawana**. Logo baru langsung dipakai di navigasi, beranda, login, menu admin, dan ikon tab. Ada tombol kembali ke logo bawaan |
+| **Data Angkatan per tahun** | Menu *Master > Data Angkatan*: Sekretaris mengisi nama angkatan untuk tiap tahun sejak 2004. **Singkatan opsional.** Ada pengisian satu per satu dan **isi massal** (`tahun | nama | singkatan`), plus papan kelengkapan tahun yang belum diisi |
+| **Sejarah per tahun** | Halaman Tentang menggabungkan cerita dan nama angkatan tiap tahun, lengkap dengan navigasi lompat ke tahun |
+| **Angkatan di data anggota** | Pilihan angkatan di form anggota kini mengambil dari Data Angkatan. Sekretaris juga boleh menetapkan angkatan anggota (peran pengurus tetap khusus Ketua Adat) |
 
 ## Baru di v0.3
 | Fitur | Keterangan |
@@ -27,9 +36,11 @@ Stack: Next.js 14 + Supabase (Postgres, Auth, Storage) + Vercel gratis.
 Pembagian ini bisa diubah di satu tempat: `lib/auth.js` (objek `KELOMPOK`).
 
 ---
-## A. Upgrade dari v0.2 (sudah terpasang)
+## A. Upgrade dari versi sebelumnya (sudah terpasang)
 1. Ekstrak ZIP, timpa isi folder repo (jangan hapus folder `.git`), commit dan push lewat GitHub Desktop.
-2. Supabase > SQL Editor: jalankan **`supabase/04_fitur_lanjutan.sql`** (aman diulang). Ini menambah peran BPR, tabel baru, mengubah Becel menjadi Bendahara, dan memperbarui batas ukuran Storage.
+2. Supabase > SQL Editor, jalankan yang belum pernah dijalankan (semuanya aman diulang):
+   * **`04_fitur_lanjutan.sql`** (dari v0.3): peran BPR, tabel baru, Becel menjadi Bendahara, batas ukuran Storage.
+   * **`06_angkatan_sejarah.sql`** (baru di v0.4): kolom tahun pada angkatan, singkatan jadi opsional. Data angkatan yang ada (mis. SPG) tidak berubah.
 3. (Opsional) buat akun Founder developer: ikuti **`supabase/05_founder_tersembunyi.sql`**.
 4. (Opsional, disarankan) pasang Kunci Google (bagian C).
 5. Restart `npm run dev`, atau tunggu Vercel selesai deploy.
@@ -37,7 +48,7 @@ Pembagian ini bisa diubah di satu tempat: `lib/auth.js` (objek `KELOMPOK`).
 
 ## B. Pasang dari nol
 1. Node.js 20 LTS. Perintah `git` tidak wajib (pakai GitHub Desktop).
-2. Supabase SQL Editor, jalankan berurutan: `01_rombak_inventaris.sql`, `02_seed_inventaris.sql`, `04_fitur_lanjutan.sql` (lalu opsional `03` dan `05`).
+2. Supabase SQL Editor, jalankan berurutan: `01_rombak_inventaris.sql`, `02_seed_inventaris.sql`, `04_fitur_lanjutan.sql`, `06_angkatan_sejarah.sql` (lalu opsional `03` dan `05`).
 3. Salin `.env.example` menjadi `.env.local`, isi kunci Supabase (Project Settings > API). **Jangan commit `.env.local`.**
 4. `npm install` lalu `npm run dev`, buka http://localhost:3000.
 5. Deploy: Vercel > Import repo > isi Environment Variables yang sama (`NEXT_PUBLIC_SITE_URL` = alamat Vercel-mu).
@@ -51,6 +62,8 @@ Tanpa kunci, link Drive tetap diterima (halaman publiknya dicek terbuka), tetapi
 
 ## D. Cara memakai
 * **File surat/RAB/foto:** pilih tab *Unggah file* (maks 50 MB) atau *Link Google Drive* (maks 100 MB). Di Drive: Bagikan > Akses umum > **Siapa saja yang memiliki link** (Pelihat), lalu salin link. File di atas 50 MB otomatis diarahkan ke Drive.
+* **Data Angkatan:** menu *Master > Data Angkatan*. Klik sebuah tahun di papan atas untuk mengisinya. Satu angkatan = tahun + nama (+ singkatan jika ada). Banyak sekaligus: tempel satu baris satu angkatan, mis. `2005 | Nama Angkatan | SNG` (singkatan boleh dikosongkan). Angkatan yang masih dipakai anggota tidak bisa dihapus. Cerita sejarah tiap tahun ditulis di *Profil Situs*; keduanya otomatis bertemu di halaman Tentang.
+* **Ganti logo:** *Profil Situs* > Logo Rimbawana > pilih gambar (PNG transparan disarankan, maks 10 MB) > Ganti Logo.
 * **Galeri:** menu *Galeri Media* > Tambah Media. Video, album (link folder), dan foto besar lewat Drive. Tombol mata menyembunyikan dari situs publik.
 * **Profil Situs:** ubah teks, tambah bagian sejarah, divisi, tahap kaderisasi. Tersimpan di database, tampil di Beranda/Tentang.
 * **Chat:** menu *Chat Pengurus*. Ketua Adat/Sekretaris membuat ruang (umum = semua pengurus + BPR, khusus = anggota dipilih) dan mengatur anggota lewat *Atur ruang*. Ikon kamera di kolom pesan membagikan link **Google Meet** (tombol *Buat rapat Meet baru* membuka meet.new). Rapat yang akan datang tampil di Dashboard.
@@ -71,5 +84,5 @@ Tanpa kunci, link Drive tetap diterima (halaman publiknya dicek terbuka), tetapi
 app/            halaman (publik di app/(publik); internal di app/<modul>)
 components/     Shell, FormAksi, UnggahBerkas, ChatRoom, ...
 lib/            auth.js (peran), drive.js, berkas.js, chat.js, profil.js, konten.js (isi cadangan)
-supabase/       skrip SQL 01-05
+supabase/       skrip SQL 01-06
 ```

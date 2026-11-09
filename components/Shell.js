@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { keluar } from '@/app/login/actions'
 import { PERAN } from '@/lib/akun'
 import { getSaya, boleh } from '@/lib/auth'
+import { getLogo } from '@/lib/profil'
 
 // izin = nama kelompok di lib/auth.js. Tanpa izin = semua anggota yang login.
 const MENU = [
@@ -23,6 +24,7 @@ const MENU = [
     { id: 'media', label: 'Galeri Media', href: '/media' } ] },
   { label: 'Master', icon: 'database', items: [
     { id: 'anggota', label: 'Anggota', href: '/anggota' },
+    { id: 'angkatan', label: 'Data Angkatan', href: '/angkatan', izin: 'lihat' },
     { id: 'lokasi', label: 'Lokasi Simpan', href: '/lokasi', izin: 'inventaris' },
     { id: 'mapala', label: 'Mapala Mitra', href: '/mapala', izin: 'inventaris' } ] },
 ]
@@ -30,7 +32,7 @@ const Tautan = ({ m, aktif }) => (
   <Link href={m.href} className={aktif === m.id ? 'aktif' : ''}><i className={`bi bi-${m.icon || 'dot'}`} />{m.label}</Link>)
 
 export default async function Shell({ aktif, judul, children }) {
-  const saya = await getSaya()
+  const [saya, logo] = await Promise.all([getSaya(), getLogo()])
   const peran = saya && PERAN[saya.peran] !== '-' ? PERAN[saya.peran] : 'Anggota'
   const menu = MENU.map(g => g.items
     ? { ...g, items: g.items.filter(i => boleh(saya, i.izin)) }
@@ -39,7 +41,7 @@ export default async function Shell({ aktif, judul, children }) {
     <input id="menu" type="checkbox" hidden />
     <div className="app">
       <aside className="sidebar">
-        <Link className="brand" href="/dashboard"><img src="/logo.png" alt="" /><span>Rimbawana<small>UPI Kampus Cibiru</small></span></Link>
+        <Link className="brand" href="/dashboard"><img src={logo} alt="" /><span>Rimbawana<small>UPI Kampus Cibiru</small></span></Link>
         {menu.map(g => g.items ? (
           <details key={g.label} open={g.items.some(i => i.id === aktif)}>
             <summary><i className={`bi bi-${g.icon}`} />{g.label}<i className="bi bi-chevron-down ms-auto" /></summary>
